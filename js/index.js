@@ -152,7 +152,10 @@ function renderMonsterImage(monsterId, tooltip_content) {
     const monster_obj = monster_data.find((element) => {
         return element.id == monsterId;
     });
-    const monster_attr = monster_obj.attribute
+	
+	if(!monster_obj) return ''
+	
+    const monster_attr = monster_obj?.attribute
 	
     return `
         <div class='col-3 col-md-2 col-lg-1 result'>
