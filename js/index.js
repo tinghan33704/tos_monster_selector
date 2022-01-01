@@ -12,6 +12,7 @@ $(document).ready(function(){
 	$("#craft_id_string").on("click", craftString)
 	$("#reset_chosen").on("click", resetChosen)
 	$(".result-row").css({'display': 'none'})
+	$(".preview-hr").css({'display': 'none'})
 	$(".preview-row").css({'display': 'none'})
     
     $('#toTop-btn').click(() => { 
@@ -35,12 +36,15 @@ function createExtraTagFilterButtonRow(name, data) {
 	$(`.${name}-row`).html(() =>
 	{
 		let str = $(`.${name}-row`).html();
-		$.each(data, (index, tag) => {
-			str += 
-			`<div class='col-6 col-md-4 col-lg-2 btn-shell' title='${tag.name}'>
-				<input type='checkbox' class='filter' id='${name}-${index}'>
-				<label class='p-1 w-100 text-center ${name}-btn' for='${name}-${index}'>${tag.name}</label>
-			</div>`
+		$.each(data, (group_index, tagGroup) => {
+			$.each(tagGroup, (index, tag) => {
+				str += 
+				`<div class='col-6 col-md-4 col-lg-2 btn-shell' title='${tag.name}'>
+					<input type='checkbox' class='filter' id='${name}-${group_index}-${index}'>
+					<label class='p-1 w-100 text-center ${name}-btn' for='${name}-${group_index}-${index}'>${tag.name}</label>
+				</div>`
+			})
+			str += `<div class="col-12 my-2"></div>`
 		})
 		
 		return str
@@ -94,7 +98,9 @@ function filterMonster() {
 		}
 		
 		if(isExtraTagSelected) {
-			const selectedData = extraFilter_data.filter(tag => extra_tag_set.has(tag.name))
+			const selectedData = extraFilter_data.reduce(function(acc, cur){
+				 return acc.concat(cur);
+			}, []).filter(tag => extra_tag_set.has(tag.name))
 			const idGroup = selectedData.map(tag => tag.otherMonsters).reduce(function(acc, cur){
 				 return acc.concat(cur);
 			}, [])
@@ -146,6 +152,7 @@ function renderPreview() {
 	})
 	
 	$(".preview-row").css({'display': 'block'})
+	$(".preview-hr").css({'display': 'block'})
 }
 
 function renderMonsterImage(monsterId, tooltip_content) {
